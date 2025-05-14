@@ -1,9 +1,28 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
 import { API_URL } from "./urls";
+import excludedRoutes from "./excluded-routes";
+import router from "../components/Routes";
+
+// Create middleware to redirect to login page on 401 errors
+const logoutLink = onError((error) => {
+  if (
+    error.graphQLErrors?.length &&
+    (error.graphQLErrors[0].extensions?.originalError as any)?.statusCode === 401 &&
+    !excludedRoutes.includes(window.location.pathname)
+  ) {
+    router.navigate("/login");
+    
+    // Reset the Apollo Client store to clear any cached data
+    client.resetStore();
+  }
+});
+
+const httpLink = new HttpLink({ uri: `${API_URL}/graphql` });
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: `${API_URL}/graphql`,
+  link: logoutLink.concat(httpLink),
 });
 
 export default client;

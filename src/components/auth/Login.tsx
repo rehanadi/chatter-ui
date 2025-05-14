@@ -14,9 +14,9 @@ const Login = () => {
     >
       <Link
         to="/signup"
-        style={{ alignSelf: "center", textDecoration: "none" }}
+        style={{ alignSelf: "center" }}
       >
-        <MUILink>
+        <MUILink sx={{ textDecoration: "none" }}>
           Signup
         </MUILink>
       </Link>

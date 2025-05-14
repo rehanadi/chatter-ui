@@ -4,10 +4,12 @@ import Auth from "./Auth"
 import { useCreateUser } from "../../hooks/useCreateUser";
 import { useState } from "react";
 import { extractErrorMessage } from "../../utils/errors";
+import { useLogin } from "../../hooks/useLogin";
 
 const Signup = () => {
   const [createUser] = useCreateUser();
   const [error, setError] = useState("");
+  const { login } = useLogin();
 
   interface SignupData {
     email: string;
@@ -28,6 +30,7 @@ const Signup = () => {
   const signupHandler = async ({ email, password }: SignupData) => {
     try {
       setError("");
+
       const res = await createUser({
         variables: {
           createUserInput: {
@@ -40,6 +43,8 @@ const Signup = () => {
       if (res.errors) {
         errorHandler(res.errors);
       }
+
+      await login({ email, password });
     } catch (err) {
       errorHandler(err);
     }
@@ -53,9 +58,9 @@ const Signup = () => {
     >
       <Link
         to="/login"
-        style={{ alignSelf: "center", textDecoration: "none" }}
+        style={{ alignSelf: "center" }}
       >
-        <MUILink>
+        <MUILink sx={{ textDecoration: "none" }}>
           Login
         </MUILink>
       </Link>
