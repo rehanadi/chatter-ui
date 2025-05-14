@@ -10,6 +10,7 @@ const Login = () => {
     <Auth
       submitLabel="Login"
       onSubmit={(request) => login(request)}
+      error={error}
     >
       <Link
         to="/signup"

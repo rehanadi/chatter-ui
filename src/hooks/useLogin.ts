@@ -8,10 +8,10 @@ interface LoginRequest {
 }
 
 const useLogin = () => {
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const login = async (request: LoginRequest) => {
-    setError(false);
+    setError("");
 
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
@@ -22,7 +22,11 @@ const useLogin = () => {
     });
 
     if (!res.ok) {
-      setError(true);
+      if (res.status === 401) {
+        setError("Credentials are not valid.");
+      } else {
+        setError("An unknown error occurred.");
+      }
       return;
     }
 
