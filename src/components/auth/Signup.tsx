@@ -5,6 +5,7 @@ import { useCreateUser } from "../../hooks/useCreateUser";
 import { useState } from "react";
 import { extractErrorMessage } from "../../utils/errors";
 import { useLogin } from "../../hooks/useLogin";
+import { UNKNOWN_ERROR_MESSAGE } from "../../constants/errors";
 
 const Signup = () => {
   const [createUser] = useCreateUser();
@@ -24,7 +25,7 @@ const Signup = () => {
       return;
     }
 
-    setError("An unknown error occurred.");
+    setError(UNKNOWN_ERROR_MESSAGE);
   };
 
   const signupHandler = async ({ email, password }: SignupData) => {

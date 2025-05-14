@@ -8,6 +8,8 @@ import MenuItem from '@mui/material/MenuItem';
 import { MouseEvent, useState } from "react";
 import { useLogout } from "../../hooks/useLogout";
 import { onLogout } from "../../utils/logout";
+import { snackVar } from "../../constants/snack";
+import { UNKNOWN_ERROR_SNACK_MESSAGE } from "../../constants/errors";
 
 const Settings = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -22,9 +24,13 @@ const Settings = () => {
   };
 
   const logoutHandler = async () => {
-    await logout();
-    onLogout();
-    handleCloseUserMenu();
+    try {
+      await logout();
+      onLogout();
+      handleCloseUserMenu();
+    } catch (err) {
+      snackVar(UNKNOWN_ERROR_SNACK_MESSAGE);
+    }
   };
 
   return (
