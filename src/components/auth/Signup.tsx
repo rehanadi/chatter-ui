@@ -28,33 +28,31 @@ const Signup = () => {
     setError(UNKNOWN_ERROR_MESSAGE);
   };
 
-  const signupHandler = async ({ email, password }: SignupData) => {
-    try {
-      setError("");
-
-      const res = await createUser({
-        variables: {
-          createUserInput: {
-            email,
-            password,
-          },
-        },
-      });
-
-      if (res.errors) {
-        errorHandler(res.errors);
-      }
-
-      await login({ email, password });
-    } catch (err) {
-      errorHandler(err);
-    }
-  };
-
   return (
     <Auth
       submitLabel="Signup"
-      onSubmit={signupHandler}
+      onSubmit={async ({ email, password }) => {
+        try {
+          setError("");
+
+          const res = await createUser({
+            variables: {
+              createUserInput: {
+                email,
+                password,
+              },
+            },
+          });
+
+          if (res.errors) {
+            errorHandler(res.errors);
+          }
+
+          await login({ email, password });
+        } catch (err) {
+          errorHandler(err);
+        }
+      }}
       error={error}
     >
       <Link
