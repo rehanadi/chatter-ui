@@ -32,7 +32,6 @@ const ChatList = () => {
         <List
           sx={{
             width: '100%',
-            maxWidth: 360,
             maxHeight: '80vh',
             overflow: 'auto',
             bgcolor: 'background.paper',

@@ -60,7 +60,7 @@ const Chat = () => {
             alignItems="center"
             marginBottom="1rem"
           >
-            <Grid size={{ xs: 3, md: 1 }}>
+            <Grid size={{ xs: 2, lg: 1 }}>
               <Avatar
                 src=""
                 sx={{
@@ -69,7 +69,7 @@ const Chat = () => {
                 }}
               />
             </Grid>
-            <Grid size={{ xs: 9, md: 11 }}>
+            <Grid size={{ xs: 10, lg: 11 }}>
               <Stack>
                 <Paper
                   sx={{ width: "fit-content" }}
@@ -99,6 +99,7 @@ const Chat = () => {
           justifySelf: "flex-end",
           display: "flex",
           alignItems: "center",
+          marginY: "1rem",
         }}
       >
         <InputBase

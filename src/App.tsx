@@ -26,14 +26,19 @@ const App = () => {
         <CssBaseline />
         <Header />
         <Guard>
-          {showChatList ? (
-            <Layout
-              aside={<ChatList />}
-              main={<Routes />}
-            />
-          ) : (
-            <Routes />
-          )}
+          <Container
+            maxWidth="xl"
+            sx={{ marginTop: "1rem" }}
+          >
+            {showChatList ? (
+              <Layout
+                aside={<ChatList />}
+                main={<Routes />}
+              />
+            ) : (
+              <Routes />
+            )}
+          </Container>
         </Guard>
         <Snackbar />
       </ThemeProvider>
@@ -42,11 +47,7 @@ const App = () => {
 };
 
 const Routes = () => {
-  return (
-    <Container sx={{ height: "100%" }}>
-      <RouterProvider router={router} />
-    </Container>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

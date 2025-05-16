@@ -8,11 +8,11 @@ interface LayoutProps {
 
 const Layout = ({ aside, main }: LayoutProps) => {
   return (
-    <Grid container>
-      <Grid size={{ md: 3 }}>
+    <Grid container spacing={5}>
+      <Grid size={{ xs: 12, md: 5, lg: 4, xl: 3 }}>
         {aside}
       </Grid>
-      <Grid size={{ md: 9 }}>
+      <Grid size={{ xs: 12, md: 7, lg: 8, xl: 9 }}>
         {main}
       </Grid>
     </Grid>
