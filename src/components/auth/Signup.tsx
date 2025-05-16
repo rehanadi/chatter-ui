@@ -12,11 +12,6 @@ const Signup = () => {
   const [error, setError] = useState("");
   const { login } = useLogin();
 
-  interface SignupData {
-    email: string;
-    password: string;
-  }
-
   const errorHandler = (errors: any) => {
     const errorMessage = extractErrorMessage(errors);
 
