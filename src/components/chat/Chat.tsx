@@ -1,20 +1,43 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useGetChat } from "../../hooks/useGetChat";
-import { Box, Divider, IconButton, InputBase, Paper, Stack } from "@mui/material";
+import { Avatar, Box, Divider, Grid, IconButton, InputBase, Paper, Stack, Typography } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useCreateMessage } from "../../hooks/useCreateMessage";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGetMessages } from "../../hooks/useGetMessages";
 
 const Chat = () => {
   const params = useParams();
   const chatId = params._id!;
+  const location = useLocation();
 
   const [message, setMessage] = useState("");
+  const lastRef = useRef<HTMLDivElement | null>(null);
 
   const [createMessage] = useCreateMessage(chatId);
   const { data } = useGetChat({ _id: chatId });
   const { data: messages } = useGetMessages({ chatId });
+
+  const scrollToBottom = () => lastRef.current?.scrollIntoView();
+
+  useEffect(() => {
+    setMessage("");
+    scrollToBottom();
+  }, [location, messages]);
+
+  const handleCreateMessage = async () => {
+    await createMessage({
+      variables: {
+        createMessageInput: {
+          chatId,
+          content: message,
+        },
+      },
+    });
+
+    setMessage("");
+    scrollToBottom();
+  };
 
   return (
     <Stack
@@ -24,12 +47,50 @@ const Chat = () => {
       }}
     >
       <h1>{data?.chat.name}</h1>
-      <Box>
+      <Box
+        sx={{
+          maxHeight: "70vh",
+          overflow: "auto",
+        }}
+      >
         {messages?.messages.map((message) => (
-          <p key={message._id}>
-            {message.content}
-          </p>
-        ))}         
+          <Grid
+            key={message._id}
+            container
+            alignItems="center"
+            marginBottom="1rem"
+          >
+            <Grid size={{ xs: 3, md: 1 }}>
+              <Avatar
+                src=""
+                sx={{
+                  width: 52,
+                  height: 52,
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 9, md: 11 }}>
+              <Stack>
+                <Paper
+                  sx={{ width: "fit-content" }}
+                >
+                  <Typography
+                    sx={{ padding: "0.9rem" }}
+                  >
+                    {message.content}
+                  </Typography>
+                </Paper>
+                <Typography
+                  variant="caption"
+                  sx={{ marginLeft: "0.25rem" }}
+                >
+                  {new Date(message.createdAt).toLocaleTimeString()}
+                </Typography>
+              </Stack>
+            </Grid>
+          </Grid>
+        ))}      
+        <div ref={lastRef}></div>
       </Box>
       <Paper
         sx={{
@@ -44,6 +105,11 @@ const Chat = () => {
           placeholder="Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={async (e) => {
+            if (e.key === "Enter") {
+              await handleCreateMessage();
+            }
+          }}
           sx={{
             ml: 1,
             flex: 1,
@@ -59,16 +125,7 @@ const Chat = () => {
         />
         <IconButton
           color="primary"
-          onClick={() => {
-            createMessage({
-              variables: {
-                createMessageInput: {
-                  chatId,
-                  content: message,
-                },
-              },
-            });
-          }}
+          onClick={handleCreateMessage}
           sx={{ p: "10px" }}
         >
           <SendIcon />
