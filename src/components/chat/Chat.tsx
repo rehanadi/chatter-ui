@@ -6,6 +6,7 @@ import { useCreateMessage } from "../../hooks/useCreateMessage";
 import { useEffect, useRef, useState } from "react";
 import { useGetMessages } from "../../hooks/useGetMessages";
 import { useMessageCreated } from "../../hooks/useMessageCreated";
+import { Message } from "../../gql/graphql";
 
 const Chat = () => {
   const params = useParams();
@@ -13,16 +14,38 @@ const Chat = () => {
   const location = useLocation();
 
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
   const lastRef = useRef<HTMLDivElement | null>(null);
 
   const [createMessage] = useCreateMessage(chatId);
   const { data } = useGetChat({ _id: chatId });
-  const { data: messages } = useGetMessages({ chatId });
+  const { data: existingMessages } = useGetMessages({ chatId });
   const { data: latestMessage } = useMessageCreated({ chatId });
 
   console.log("latestMessage:", latestMessage);
 
   const scrollToBottom = () => lastRef.current?.scrollIntoView();
+
+  const sortedMessages = [...messages].sort((a, b) => {
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+
+  useEffect(() => {
+    if (existingMessages) {
+      setMessages(existingMessages.messages);
+    }
+  }, [existingMessages]);
+
+  useEffect(() => {
+    const existingLatestMessageId = messages[messages.length - 1]?._id;
+
+    if (
+      latestMessage?.messageCreated &&
+      existingLatestMessageId !== latestMessage.messageCreated._id
+    ) {
+      setMessages((prevMessages) => [...prevMessages, latestMessage.messageCreated]);
+    }
+  }, [latestMessage, messages]);
 
   useEffect(() => {
     setMessage("");
@@ -57,7 +80,7 @@ const Chat = () => {
           overflow: "auto",
         }}
       >
-        {messages?.messages.map((message) => (
+        {sortedMessages.map((message) => (
           <Grid
             key={message._id}
             container
