@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import List from '@mui/material/List';
 import ChatListItem from "./chat-list-item/ChatListItem";
 import { Divider, Stack } from "@mui/material";
@@ -14,13 +14,18 @@ const ChatList = () => {
   const { data } = useGetChats();
   const { path } = usePath();
 
-  const sortedChats = data?.chats ? [...data?.chats].sort((a, b) => {
-    if (!a.latestMessage) return -1;
-    return (
-      new Date(a.latestMessage?.createdAt).getTime() -
-      new Date(b.latestMessage?.createdAt).getTime()
-    );
-  }) : [];
+  const sortedChats = useMemo(() => {
+    if (!data?.chats) return [];
+
+    return [...data.chats].sort((a, b) => {
+      if (!a.latestMessage) return -1;
+
+      return (
+        new Date(a.latestMessage?.createdAt).getTime() -
+        new Date(b.latestMessage?.createdAt).getTime()
+      );
+    }).reverse();
+  }, [data?.chats]);
 
   useMessageCreated({ chatIds: data?.chats.map((chat) => chat._id) || [] });
 
@@ -54,7 +59,7 @@ const ChatList = () => {
               chat={chat}
               selected={selectedChatId === chat._id}
             />
-          )).reverse()}
+          ))}
         </List>
       </Stack>
     </>

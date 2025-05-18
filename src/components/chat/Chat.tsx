@@ -3,7 +3,7 @@ import { useGetChat } from "../../hooks/useGetChat";
 import { Avatar, Box, Divider, Grid, IconButton, InputBase, Paper, Stack, Typography } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useCreateMessage } from "../../hooks/useCreateMessage";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGetMessages } from "../../hooks/useGetMessages";
 
 const Chat = () => {
@@ -20,9 +20,13 @@ const Chat = () => {
 
   const scrollToBottom = () => lastRef.current?.scrollIntoView();
 
-  const sortedMessages = messages ? [...messages.messages].sort((a, b) => {
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-  }) : [];
+  const sortedMessages = useMemo(() => {
+    if (!messages?.messages) return [];
+
+    return [...messages.messages].sort((a, b) => {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+  }, [messages?.messages]);
 
   useEffect(() => {
     setMessage("");
