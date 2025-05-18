@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { graphql } from "../gql";
-import { getMessagesDocument } from "./useGetMessages";
+import { updateMessages } from "../cache/messages";
+import { updateLatestMessage } from "../cache/latest-message";
 
 const createMessageDocument = graphql(`
   mutation CreateMessage($createMessageInput: CreateMessageInput!) {
@@ -14,22 +15,9 @@ const useCreateMessage = (chatId: string) => {
   // Update specific message cache with chat id
   return useMutation(createMessageDocument, {
     update(cache, { data }) {
-      const messagesQueryOptions = {
-        query: getMessagesDocument,
-        variables: { chatId },
-      };
-
-      const messages = cache.readQuery({ ...messagesQueryOptions });
-      // if (!messages || !data?.createMessage) return;
-      const existingMessages = messages?.messages || [];
-      const newMessages = data?.createMessage || [];
-
-      cache.writeQuery({
-        ...messagesQueryOptions,
-        data: {
-          messages: existingMessages.concat(newMessages),
-        }
-      });
+      if (!data?.createMessage) return;
+      updateMessages(cache, data.createMessage);
+      updateLatestMessage(cache, data.createMessage);
     },
   });
 }
