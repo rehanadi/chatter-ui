@@ -7,11 +7,15 @@ import ChatListAdd from "./chat-list-add/ChatListAdd";
 import { useGetChats } from "../../hooks/useGetChats";
 import { usePath } from "../../hooks/usePath";
 import { useMessageCreated } from "../../hooks/useMessageCreated";
+import { PAGE_SIZE } from "../../constants/page-size";
 
 const ChatList = () => {
   const [chatListAddVisible, setChatListAddVisible] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState("");
-  const { data } = useGetChats();
+  const { data } = useGetChats({
+    skip: 0,
+    limit: PAGE_SIZE,
+  });
   const { path } = usePath();
 
   const sortedChats = useMemo(() => {
