@@ -39,7 +39,35 @@ const splitLink = split(
 );
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          chats: {
+            // Indicates that none of the query arguments should be used as cache keys for the chats field
+            keyArgs: false,
+            merge(existing = [], incoming, { args }: any) {
+              const merged = existing ? existing.slice(0) : [];
+
+              console.log("existing:", existing);
+              console.log("incoming:", incoming);
+              console.log("args:", args);
+              console.log("merged1:", merged);
+
+              // Merge the incoming array into the existing array
+              for (let i = 0; i < incoming.length; ++i) {
+                merged[args.skip + i] = incoming[i];
+              }
+
+              console.log("merged2:", merged);
+              
+              return merged;
+            },
+          },
+        },
+      },
+    },
+  }),
   link: logoutLink.concat(splitLink),
 });
 

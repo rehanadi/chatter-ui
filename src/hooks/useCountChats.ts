@@ -4,7 +4,7 @@ import { snackVar } from "../constants/snack";
 import { UNKNOWN_ERROR_SNACK_MESSAGE } from "../constants/errors";
 
 const useCountChats = () => {
-  const [chatsCount, setChatsCount] = useState<number | undefined>(0);
+  const [chatsCount, setChatsCount] = useState<number | undefined>();
 
   const countChats = useCallback(async () => {
     const res = await fetch(`${API_URL}/chats/count`);
