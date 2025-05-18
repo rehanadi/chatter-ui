@@ -72,9 +72,9 @@ const ChatList = () => {
               },
             })}
             hasMore={
-              data?.chats && chatsCount ?
-                data.chats.length < chatsCount :
-                false
+              data?.chats && chatsCount
+                ? data.chats.length < chatsCount
+                : false
             }
             useWindow={false}
           >

@@ -46,23 +46,11 @@ const client = new ApolloClient({
           chats: {
             // Indicates that none of the query arguments should be used as cache keys for the chats field
             keyArgs: false,
-            merge(existing = [], incoming, { args }: any) {
-              const merged = existing ? existing.slice(0) : [];
-
-              console.log("existing:", existing);
-              console.log("incoming:", incoming);
-              console.log("args:", args);
-              console.log("merged1:", merged);
-
-              // Merge the incoming array into the existing array
-              for (let i = 0; i < incoming.length; ++i) {
-                merged[args.skip + i] = incoming[i];
-              }
-
-              console.log("merged2:", merged);
-              
-              return merged;
-            },
+            merge,
+          },
+          messages: {
+            keyArgs: ["chatId"],
+            merge,
           },
         },
       },
@@ -70,5 +58,16 @@ const client = new ApolloClient({
   }),
   link: logoutLink.concat(splitLink),
 });
+
+function merge(existing: any = [], incoming: any = [], { args }: any) {
+  const merged = existing ? existing.slice(0) : [];
+
+  // Merge the incoming array into the existing array
+  for (let i = 0; i < incoming.length; ++i) {
+    merged[args.skip + i] = incoming[i];
+  }
+
+  return merged;
+};
 
 export default client;
