@@ -23,7 +23,9 @@ const ChatListItem = ({ chat, selected }: ChatListItemProps) => {
           selected={selected}
         >
           <ListItemAvatar>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar
+              src={chat.latestMessage?.user?.imageUrl || ""}
+            />
           </ListItemAvatar>
           <ListItemText
             primary={chat.name}
