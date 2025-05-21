@@ -3,6 +3,7 @@ import { UploadFile } from "@mui/icons-material";
 import { useGetMe } from "../../hooks/useGetMe";
 import { API_URL } from "../../constants/urls";
 import { snackVar } from "../../constants/snack";
+import { commonFetch } from "../../utils/fetch";
 
 const Profile = () => {
   const me = useGetMe();
@@ -13,7 +14,7 @@ const Profile = () => {
       const file = event.target.files[0];
       formData.append("file", file); // Match with file interceptor name in the backend
 
-      const res = await fetch(`${API_URL}/users/image`, {
+      const res = await commonFetch(`${API_URL}/users/image`, {
         method: "POST",
         body: formData,
       });
